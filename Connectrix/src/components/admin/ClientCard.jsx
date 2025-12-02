@@ -10,13 +10,14 @@ import {
   EyeIcon,
   PencilIcon,
   TrashIcon,
+  UserGroupIcon,
   PlusIcon,
   MagnifyingGlassIcon,
   FunnelIcon,
   ArrowDownTrayIcon,
 } from '@heroicons/react/24/outline';
-import { disconnectClient, limitSpeed, sendReminder, getClients } from '../../../lib/api/clients';
-import { useToast } from '../../../hooks/useToast';
+import { disconnectClient, limitSpeed, sendReminder, getClients } from '../../lib/api/clients.js';
+import { useToast } from '../../hooks/useToast';
 
 const ClientList = () => {
   const [clients, setClients] = useState([]);
@@ -31,14 +32,35 @@ const ClientList = () => {
     fetchClients();
   }, []);
 
+  // Automatically block clients with overdue payments
+  useEffect(() => {
+    const blockOverdueClients = async () => {
+      const overdueClients = clients.filter(client => client.paymentStatus === 'overdue' && client.connected);
+      for (const client of overdueClients) {
+        try {
+          await disconnectClient(client.id);
+          showToast(`${client.name} automatically blocked due to overdue payment`, 'warning');
+        } catch (error) {
+          console.error(`Failed to block ${client.name}:`, error);
+        }
+      }
+      if (overdueClients.length > 0) {
+        fetchClients(); // Refresh the list
+      }
+    };
+
+    if (clients.length > 0) {
+      blockOverdueClients();
+    }
+  }, [clients, showToast]);
+
   const fetchClients = async () => {
     try {
       setLoading(true);
       const data = await getClients();
       setClients(data);
     } catch (error) {
-      showToast('Failed to fetch clients', 'error');
-      console.error('Error fetching clients:', error);
+      showToast(`Failed to fetch clients: ${error.message}`, 'error');
     } finally {
       setLoading(false);
     }
@@ -84,7 +106,7 @@ const ClientList = () => {
       await sendReminder(clientId);
       showToast(`Reminder sent to ${clientName}`, 'success');
     } catch (error) {
-      showToast('Failed to send reminder', 'error');
+      showToast(`Failed to send reminder: ${error.message}`, 'error');
     }
   };
 
@@ -133,7 +155,7 @@ const ClientList = () => {
       fetchClients(); // Refresh the list
       setSelectedClients([]);
     } catch (error) {
-      showToast('Failed to disconnect some clients', 'error');
+      showToast(`Failed to disconnect some clients: ${error.message}`, 'error');
     }
   };
 

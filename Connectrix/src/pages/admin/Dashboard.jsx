@@ -2,9 +2,10 @@ import React from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import Button from '../../components/ui/Button';
 import Card from '../../components/ui/Card';
+import ClientList from '../../components/admin/ClientCard';
 
 const AdminDashboard = () => {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
 
   return (
     <div className="p-6">
@@ -31,11 +32,7 @@ const AdminDashboard = () => {
       </div>
 
       <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
-        <div className="bg-white rounded-lg shadow p-4">
-          <p className="text-gray-600">Welcome to the Admin Dashboard, {user?.name}!</p>
-          <p className="text-sm text-gray-500 mt-2">This is where you can manage clients, monitor connections, and view analytics.</p>
-        </div>
+        <ClientList />
       </div>
     </div>
   );
