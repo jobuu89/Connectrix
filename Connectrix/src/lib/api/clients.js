@@ -32,3 +32,11 @@ export const sendReminder = async (clientId) => {
   // In a real app, this would make a POST request to send a payment reminder
   console.log(`Sent payment reminder to client ${clientId}`);
 };
+
+export const createClient = async (clientData) => {
+  // Simulate API delay
+  await new Promise(resolve => setTimeout(resolve, 500));
+
+  // In a real app, this would make a POST request to create a new client
+  console.log(`Created new client: ${clientData.name} (${clientData.email})`);
+};

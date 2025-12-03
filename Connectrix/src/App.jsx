@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import './index.css';
 import { AuthProvider } from './contexts/AuthContext';
 import { ToastProvider } from './contexts/ToastContext';
 import { ProtectedRoute } from './contexts/AuthContext';
@@ -8,6 +9,7 @@ import { ProtectedRoute } from './contexts/AuthContext';
 import HomePage from './pages/public/index';
 import LoginPage from './pages/auth/login';
 import AdminDashboard from './pages/admin/Dashboard';
+import NewClientPage from './pages/admin/clients/new';
 import ClientDashboard from './pages/client/dashboard';
 
 // Layouts
@@ -31,6 +33,7 @@ function App() {
               </ProtectedRoute>
             }>
               <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="clients/new" element={<NewClientPage />} />
               <Route index element={<Navigate to="dashboard" replace />} />
             </Route>
 
